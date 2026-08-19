@@ -238,8 +238,6 @@ INNER JOIN alugueis AS a ON c.id_cliente = a.id_cliente;
 SELECT f.titulo, a.data_aluguel FROM filmes AS f
 INNER JOIN alugueis AS a ON f.id_filme = a.id_filme;
 
-
-
 -- ------------------------------------------------------------
 -- ATIVIDADE 3 - CLIENTE + FILME
 -- ------------------------------------------------------------
@@ -293,8 +291,8 @@ WHERE f.genero = 'Drama';
 --   - título do filme;
 --   - nome do ator.
 
-SELECT f.titulo, act.nome_ator FROM atuacoes AS a
-INNER JOIN filmes AS f ON f.id_filme = a.id_filme
+SELECT f.titulo, act.nome_ator FROM filmes AS f
+INNER JOIN atuacoes AS a ON f.id_filme = a.id_filme
 INNER JOIN atores AS act ON act.id_ator = a.id_ator;
 
 -- ------------------------------------------------------------
@@ -329,13 +327,12 @@ WHERE act.nacionalidade = 'EUA';
 SELECT act.nome_ator, f.titulo, f.ano_lancamento FROM atuacoes AS a
 INNER JOIN filmes AS f ON f.id_filme = a.id_filme
 INNER JOIN atores AS act ON act.id_ator = a.id_ator
-WHERE f.ano_lancamento > 2010
+WHERE f.ano_lancamento >= 2010
 ORDER BY f.ano_lancamento DESC;
 
 -- ============================================================
 -- PARTE 2 - LEFT JOIN
 -- ============================================================
-
 
 -- ------------------------------------------------------------
 -- ATIVIDADE 8 - TODOS OS CLIENTES
@@ -352,7 +349,7 @@ ORDER BY f.ano_lancamento DESC;
 -- Utilize LEFT JOIN.
 
 SELECT a.id_aluguel, c.nome_cliente, a.data_aluguel FROM clientes AS c
-LEFT JOIN alugueis AS a ON a.id_aluguel = c.id_cliente;
+LEFT JOIN alugueis AS a ON a.id_cliente = c.id_cliente;
 
 -- ------------------------------------------------------------
 -- ATIVIDADE 9 - CLIENTES SEM ALUGUEL
@@ -370,7 +367,7 @@ LEFT JOIN alugueis AS a ON a.id_aluguel = c.id_cliente;
 
 SELECT c.id_cliente, c.nome_cliente FROM clientes AS c
 LEFT JOIN alugueis AS a ON a.id_cliente = c.id_cliente
-WHERE a.data_aluguel IS NOT NULL
+WHERE a.data_aluguel IS NULL
 GROUP BY c.id_cliente
 ORDER BY c.id_cliente;
 
@@ -428,8 +425,8 @@ WHERE a.id_ator IS NULL;
 -- Para preservar todos os clientes, pense em qual tabela deve
 -- ficar do lado direito do RIGHT JOIN.
 
-SELECT a.id_aluguel, c.nome_cliente, a.data_aluguel FROM clientes AS c
-RIGHT JOIN alugueis AS a ON a.id_aluguel = c.id_cliente;
+SELECT a.id_aluguel, c.nome_cliente, a.data_aluguel FROM alugueis AS a
+RIGHT JOIN  clientes AS c ON a.id_aluguel = c.id_cliente;
 
 -- ------------------------------------------------------------
 -- ATIVIDADE 13 - TODOS OS ATORES
@@ -443,10 +440,9 @@ RIGHT JOIN alugueis AS a ON a.id_aluguel = c.id_cliente;
 --   - nome do ator;
 --   - título do filme.
 
-SELECT f.titulo, act.nome_ator FROM atuacoes AS a
-RIGHT JOIN atores AS act ON a.id_ator = act.id_ator
-RIGHT JOIN filmes AS f ON f.id_filme = a.id_filme
-ORDER BY f.titulo;
+SELECT f.titulo, act.nome_ator FROM filmes AS f
+RIGHT JOIN  atuacoes AS a ON f.id_filme = a.id_filme
+RIGHT JOIN atores AS act ON a.id_ator = act.id_ator;
 
 -- ------------------------------------------------------------
 -- ATIVIDADE 14 - LEFT JOIN X RIGHT JOIN
@@ -501,7 +497,8 @@ RIGHT JOIN filmes AS f ON f.id_filme = a.id_filme;
 
 SELECT c.nome_cliente, COUNT(a.id_aluguel) FROM clientes AS c
 LEFT JOIN alugueis AS a ON a.id_cliente = c.id_cliente
-GROUP BY c.id_cliente;
+GROUP BY c.id_cliente
+ORDER BY COUNT(a.id_aluguel) DESC;
 
 -- ------------------------------------------------------------
 -- ATIVIDADE 16 - QUANTIDADE DE VEZES QUE CADA FILME FOI ALUGADO
@@ -518,7 +515,8 @@ GROUP BY c.id_cliente;
 
 SELECT f.titulo, COUNT(a.id_aluguel) FROM filmes AS f
 LEFT JOIN alugueis AS a ON f.id_filme = a.id_filme
-GROUP BY f.id_filme;
+GROUP BY f.id_filme
+ORDER BY COUNT(a.id_aluguel) DESC;
 
 -- ------------------------------------------------------------
 -- ATIVIDADE 17 - MÉDIA DAS NOTAS POR FILME
@@ -632,9 +630,10 @@ GROUP BY f.id_filme;
 --   GROUP BY
 --   HAVING
 
-
-
-
+SELECT c.nome_cliente, COUNT(a.id_aluguel) FROM clientes AS c
+INNER JOIN alugueis AS a ON a.id_cliente = c.id_cliente
+GROUP BY c.id_cliente
+HAVING COUNT(a.id_aluguel) >= 5;
 
 -- ------------------------------------------------------------
 -- ATIVIDADE 22 - FILMES MAIS ALUGADOS
@@ -647,9 +646,11 @@ GROUP BY f.id_filme;
 --
 -- Ordene do mais alugado para o menos alugado.
 
-
-
-
+SELECT f.titulo, COUNT(a.id_aluguel) FROM filmes AS f
+INNER JOIN alugueis AS a ON a.id_filme = f.id_filme
+GROUP BY f.id_filme
+HAVING COUNT(a.id_aluguel) > 8
+ORDER BY COUNT(a.id_aluguel) DESC;
 
 -- ------------------------------------------------------------
 -- ATIVIDADE 23 - GÊNEROS E MÉDIA DE NOTAS
@@ -670,9 +671,10 @@ GROUP BY f.id_filme;
 --   WHERE
 --   GROUP BY
 
-
-
-
+SELECT f.genero, COUNT(a.nota), ROUND(AVG(a.nota),2) FROM filmes as f
+INNER JOIN alugueis AS a ON a.id_filme = f.id_filme
+WHERE a.nota IS NOT NULL
+GROUP BY f.genero;
 
 -- ------------------------------------------------------------
 -- ATIVIDADE 24 - GÊNEROS BEM AVALIADOS
@@ -687,9 +689,10 @@ GROUP BY f.id_filme;
 --
 -- Utilize HAVING.
 
-
-
-
+SELECT f.genero, COUNT(a.nota), ROUND(AVG(a.nota),2) FROM filmes AS f
+INNER JOIN alugueis AS a ON a.id_filme = f.id_filme
+GROUP BY f.genero
+HAVING COUNT(a.nota) >= 7;
 
 -- ------------------------------------------------------------
 -- ATIVIDADE 25 - RELATÓRIO FINAL DE FILMES
@@ -715,3 +718,8 @@ GROUP BY f.id_filme;
 -- DICA:
 -- Para filmes nunca alugados, utilize COALESCE() se quiser
 -- apresentar o faturamento como 0 em vez de NULL.
+
+SELECT f.titulo, f.genero, COUNT(a.id_aluguel), ROUND(AVG(a.nota),2), SUM(a.nota) FROM filmes AS f
+LEFT JOIN alugueis AS a ON a.id_filme = f.id_filme
+GROUP BY f.id_filme
+ORDER BY f.titulo;
