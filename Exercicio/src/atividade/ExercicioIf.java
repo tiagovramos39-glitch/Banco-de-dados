@@ -15,7 +15,7 @@ public class ExercicioIf {
 		
 		System.out.println ("O número " + numero + (numero > 20 ? " é maior que ": " é menor que ") + 20);
 		String resultado = numero > 20 ? "É maior que" : numero == 20 ? "É igual " : "É menor";
-		System.out.println ("O número é " + numero + resultado + "20");
+		System.out.println ("O número é " + numero + resultado + " 20");
 		
 		leia.close();
 		
