@@ -1,0 +1,10 @@
+CREATE DATABASE IF NOT EXISTS senai;
+USE senai;
+
+CREATE TABLE aluno (
+id INT PRIMARY KEY AUTO_INCREMENT,
+nome VARCHAR(100) NOT NULL,
+email VARCHAR(150) NOT NULL UNIQUE
+);
+
+select * from aluno;
