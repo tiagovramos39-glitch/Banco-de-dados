@@ -19,12 +19,10 @@ public class Aluno {
 
     public Aluno() {
     }
-    public Aluno(int id, String nome, String email) {
+    public Aluno(String nome, String email) {
         this.nome = nome;
         this.email = email;
     }
-
-
 
     public int getId() {
         return id;
@@ -42,5 +40,4 @@ public class Aluno {
     public void setEmail(String email) {
         this.email = email;
     }
-
 }
